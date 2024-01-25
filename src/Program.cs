@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Model_Viewer_Demo
+namespace Gwynwhyvaar.MeshViewer
 {
 #if WINDOWS || LINUX
     /// <summary>

@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-namespace Model_Viewer_Demo
+namespace Gwynwhyvaar.MeshViewer
 {
     /// <summary>
     /// This is the main type for your game.

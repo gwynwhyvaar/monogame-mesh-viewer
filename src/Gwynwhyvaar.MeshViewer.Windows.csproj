@@ -9,14 +9,14 @@
     <ProjectGuid>{A5ACEEBD-CF5E-4135-B073-352D38EB51C0}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Model_Viewer_Demo</RootNamespace>
-    <AssemblyName>mesh-viewer-demo-win-x86</AssemblyName>
+    <RootNamespace>Gwynwhyvaar.MeshViewer.Windows</RootNamespace>
+    <AssemblyName>mesh-viewer-demo-win-x64</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <MonoGamePlatform>Windows</MonoGamePlatform>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>x64</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
