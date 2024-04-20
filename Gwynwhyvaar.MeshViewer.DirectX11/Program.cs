@@ -1,3 +1,3 @@
 ﻿
-using var game = new Gwynwhyvaar.MeshViewer.DirectX11.Game1();
+using var game = new Gwynwhyvaar.MeshViewer.DirectX11.GameHome();
 game.Run();
