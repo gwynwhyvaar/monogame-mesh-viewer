@@ -29,6 +29,6 @@
 /processorParam:RotationZ=0
 /processorParam:Scale=1
 /processorParam:SwapWindingOrder=False
-/processorParam:TextureFormat=DxtCompressed
+/processorParam:TextureFormat=Compressed
 /build:yuri.fbx
 
