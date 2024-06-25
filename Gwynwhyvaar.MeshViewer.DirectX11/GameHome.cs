@@ -31,7 +31,7 @@ namespace Gwynwhyvaar.MeshViewer.DirectX11
 
             _graphics.DeviceCreated += _graphics_DeviceCreated; 
 
-            Window.Title = "=== Monogame Asset Viewer ==="; // can change this title
+            Window.Title = "### Monogame Mesh Viewer ###"; // can change this title
         }
 
         private void _graphics_DeviceCreated(object sender, System.EventArgs e)
@@ -46,7 +46,6 @@ namespace Gwynwhyvaar.MeshViewer.DirectX11
             base.Initialize();
             GraphicsDevice.PresentationParameters.MultiSampleCount = 4;
             GraphicsDevice.PresentationParameters.IsFullScreen = true;
-            var info = GraphicsDevice.GraphicsProfile;
         }
 
         protected override void LoadContent()
