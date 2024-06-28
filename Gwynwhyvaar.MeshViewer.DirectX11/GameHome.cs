@@ -26,8 +26,8 @@ namespace Gwynwhyvaar.MeshViewer.DirectX11
 
             _graphics.GraphicsProfile = GraphicsProfile.HiDef;
             _graphics.IsFullScreen = false;
-            _graphics.PreferredBackBufferWidth = 900;
-            _graphics.PreferredBackBufferHeight = 1080;
+            _graphics.PreferredBackBufferWidth = 800;
+            _graphics.PreferredBackBufferHeight = 600;
 
             _graphics.DeviceCreated += _graphics_DeviceCreated; 
 
@@ -38,7 +38,7 @@ namespace Gwynwhyvaar.MeshViewer.DirectX11
         {
             _graphics.PreferMultiSampling = true;
             _graphics.PreferredBackBufferFormat = SurfaceFormat.Color;
-            _graphics.GraphicsDevice.PresentationParameters.MultiSampleCount = 8;
+            _graphics.GraphicsDevice.PresentationParameters.MultiSampleCount = 16;
             //graphics.PreferMultiSampling = true;        }
         }
         protected override void Initialize()
