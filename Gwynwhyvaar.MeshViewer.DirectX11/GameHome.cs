@@ -22,13 +22,12 @@ namespace Gwynwhyvaar.MeshViewer.DirectX11
         private Vector3 _modelPostion = Vector3.Up;
         private Vector3 _cameraPostion = new Vector3(100, 0, 600);
 
-        // Position Storage Variables
-        private Vector3 _posOffset = new Vector3();
-        private Vector3 _tempPos = new Vector3();
-
-        // floaty stuff ...
-        private float _amplitude = 0.15f;
-        private float _frequency = 50f;
+        private float _scale = 1.0f;
+        private float _currentTime = 0f;
+        private float _expandDuration = 1.0f;
+        private Vector3 _breatheIn, _breathOut;
+        private bool _isPulsing = false;
+        private bool _isBreathingIn = true;
 
         private Effect _effect;
 
@@ -42,10 +41,9 @@ namespace Gwynwhyvaar.MeshViewer.DirectX11
             _graphics.IsFullScreen = false;
 
             _graphics.DeviceCreated += _graphics_DeviceCreated;
+            _isPulsing = true;
 
             Window.Title = "### Monogame Mesh Viewer ###";
-
-            _posOffset = _modelPostion;
         }
 
         private void _graphics_DeviceCreated(object sender, System.EventArgs e)
@@ -74,11 +72,7 @@ namespace Gwynwhyvaar.MeshViewer.DirectX11
             {
                 Exit();
             }
-            // TODO: Add your update logic here
-            _modelRotation += (float)gameTime.ElapsedGameTime.TotalMilliseconds * MathHelper.ToRadians(0.015f);
-            float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
-            float modelFloating = MathF.Sin(deltaTime * MathF.PI * _frequency) * _amplitude;
-            FloatModel(modelFloating);
+            _modelRotation += (float)gameTime.ElapsedGameTime.TotalMilliseconds * MathHelper.ToRadians(0.025f);
 
             base.Update(gameTime);
         }
@@ -87,7 +81,8 @@ namespace Gwynwhyvaar.MeshViewer.DirectX11
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
-            DrawSolid();
+            // DrawSolid();
+            DrawSolidWithScale();
             // _tempPos = _posOffset;
             base.Draw(gameTime);
         }
@@ -120,11 +115,49 @@ namespace Gwynwhyvaar.MeshViewer.DirectX11
                 mesh.Draw();
             }
         }
-        private void FloatModel(float rotationSpeed)
+        private void DrawSolidWithScale()
         {
-            // _tempPos = _posOffset;
-            _tempPos.Y += rotationSpeed;
-            _modelPostion = _tempPos;
+            Matrix[] parentTransforms = new Matrix[_modelViewerModel.Bones.Count];
+
+            _modelViewerModel.CopyAbsoluteBoneTransformsTo(parentTransforms);
+
+            foreach (ModelMesh mesh in _modelViewerModel.Meshes)
+            {
+                foreach (BasicEffect effect in mesh.Effects)
+                {
+                    effect.EnableDefaultLighting();
+
+                    effect.World = parentTransforms[mesh.ParentBone.Index] * Matrix.CreateRotationY(_modelRotation) * Matrix.CreateTranslation(_modelPostion) * Matrix.CreateScale(_scale);
+
+                    effect.View = Matrix.CreateLookAt(_cameraPostion, Vector3.Zero, Vector3.Up);
+                    effect.Projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(45.0f), _aspectRatio, 0.1f, 1000.0f);
+
+                    effect.AmbientLightColor = Vector3.One; // Color.LightSkyBlue.ToVector3();
+                    effect.Alpha = 1;
+                    effect.SpecularColor = Vector3.Zero;
+                    effect.EmissiveColor = Vector3.Zero;
+                    // this part allows drawing of the meshes in solid
+                    effect.DirectionalLight0.Enabled = true;
+                    effect.DirectionalLight1.Enabled = false;
+                    effect.DirectionalLight2.Enabled = false;
+                }
+                mesh.Draw();
+            }
+        }
+       
+        private void MakeModelBreath(GameTime gameTime)
+        {
+            if (_isPulsing)
+            {
+                Vector3 targetScale = _isBreathingIn ? _breatheIn : _breathOut;
+                Vector3 startScale = _isBreathingIn ? _breathOut : _breatheIn;
+
+                _currentTime += (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+                float lerpFactor = _currentTime / _expandDuration;
+                _scale = Vector3.Lerp(startScale, targetScale, lerpFactor).Length();
+
+            }
         }
     }
 }
