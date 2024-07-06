@@ -1,7 +1,11 @@
 ﻿
+using System;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 
 namespace Gwynwhyvaar.MeshViewer.DirectX11
 {
@@ -10,13 +14,23 @@ namespace Gwynwhyvaar.MeshViewer.DirectX11
         private Model _modelViewerModel;
 
         private float _aspectRatio;
-        private float _modelRotation = 5.5f;
+        private float _modelRotation = 15.5f;
 
         private GraphicsDeviceManager _graphics;
         private Microsoft.Xna.Framework.Graphics.SpriteBatch _spriteBatch;
 
-        private Vector3 _modelPostion = Vector3.Zero;
+        private Vector3 _modelPostion = Vector3.Up;
         private Vector3 _cameraPostion = new Vector3(100, 0, 600);
+
+        // Position Storage Variables
+        private Vector3 _posOffset = new Vector3();
+        private Vector3 _tempPos = new Vector3();
+
+        // floaty stuff ...
+        private float _amplitude = 0.15f;
+        private float _frequency = 50f;
+
+        private Effect _effect;
 
         public GameHome()
         {
@@ -26,12 +40,12 @@ namespace Gwynwhyvaar.MeshViewer.DirectX11
 
             _graphics.GraphicsProfile = GraphicsProfile.HiDef;
             _graphics.IsFullScreen = false;
-            _graphics.PreferredBackBufferWidth = 800;
-            _graphics.PreferredBackBufferHeight = 600;
 
-            _graphics.DeviceCreated += _graphics_DeviceCreated; 
+            _graphics.DeviceCreated += _graphics_DeviceCreated;
 
-            Window.Title = "### Monogame Mesh Viewer ###"; // can change this title
+            Window.Title = "### Monogame Mesh Viewer ###";
+
+            _posOffset = _modelPostion;
         }
 
         private void _graphics_DeviceCreated(object sender, System.EventArgs e)
@@ -39,21 +53,17 @@ namespace Gwynwhyvaar.MeshViewer.DirectX11
             _graphics.PreferMultiSampling = true;
             _graphics.PreferredBackBufferFormat = SurfaceFormat.Color;
             _graphics.GraphicsDevice.PresentationParameters.MultiSampleCount = 16;
-            //graphics.PreferMultiSampling = true;        }
         }
         protected override void Initialize()
         {
             base.Initialize();
-            GraphicsDevice.PresentationParameters.MultiSampleCount = 4;
-            GraphicsDevice.PresentationParameters.IsFullScreen = true;
         }
 
         protected override void LoadContent()
         {
             _spriteBatch = new Microsoft.Xna.Framework.Graphics.SpriteBatch(GraphicsDevice);
 
-            // TODO: use this.Content to load your game content here
-            _modelViewerModel = Content.Load<Model>("yuri");
+            _modelViewerModel = Content.Load<Model>("wizard");
 
             _aspectRatio = _graphics.GraphicsDevice.Viewport.AspectRatio;
         }
@@ -66,6 +76,9 @@ namespace Gwynwhyvaar.MeshViewer.DirectX11
             }
             // TODO: Add your update logic here
             _modelRotation += (float)gameTime.ElapsedGameTime.TotalMilliseconds * MathHelper.ToRadians(0.015f);
+            float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
+            float modelFloating = MathF.Sin(deltaTime * MathF.PI * _frequency) * _amplitude;
+            FloatModel(modelFloating);
 
             base.Update(gameTime);
         }
@@ -73,8 +86,13 @@ namespace Gwynwhyvaar.MeshViewer.DirectX11
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
-
-            // TODO: Add your drawing code here
+            GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+            DrawSolid();
+            // _tempPos = _posOffset;
+            base.Draw(gameTime);
+        }
+        private void DrawSolid()
+        {
             Matrix[] parentTransforms = new Matrix[_modelViewerModel.Bones.Count];
 
             _modelViewerModel.CopyAbsoluteBoneTransformsTo(parentTransforms);
@@ -88,20 +106,25 @@ namespace Gwynwhyvaar.MeshViewer.DirectX11
                     effect.World = parentTransforms[mesh.ParentBone.Index] * Matrix.CreateRotationY(_modelRotation) * Matrix.CreateTranslation(_modelPostion);
 
                     effect.View = Matrix.CreateLookAt(_cameraPostion, Vector3.Zero, Vector3.Up);
-                    effect.Projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(45.0f), _aspectRatio, 1.0f, 1000.0f);
+                    effect.Projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(45.0f), _aspectRatio, 0.1f, 1000.0f);
 
-                    effect.AmbientLightColor = Vector3.One; /*Color.LightSkyBlue.ToVector3();*/
-
+                    effect.AmbientLightColor = Vector3.One; // Color.LightSkyBlue.ToVector3();
+                    effect.Alpha = 1;
                     effect.SpecularColor = Vector3.Zero;
                     effect.EmissiveColor = Vector3.Zero;
                     // this part allows drawing of the meshes in solid
-                    effect.DirectionalLight0.Enabled = false;
+                    effect.DirectionalLight0.Enabled = true;
                     effect.DirectionalLight1.Enabled = false;
                     effect.DirectionalLight2.Enabled = false;
                 }
                 mesh.Draw();
             }
-            base.Draw(gameTime);
+        }
+        private void FloatModel(float rotationSpeed)
+        {
+            // _tempPos = _posOffset;
+            _tempPos.Y += rotationSpeed;
+            _modelPostion = _tempPos;
         }
     }
 }
