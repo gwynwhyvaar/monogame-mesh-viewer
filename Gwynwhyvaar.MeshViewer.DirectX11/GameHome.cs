@@ -1,11 +1,6 @@
-﻿
-using System;
-
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 
 namespace Gwynwhyvaar.MeshViewer.DirectX11
 {
@@ -22,13 +17,6 @@ namespace Gwynwhyvaar.MeshViewer.DirectX11
         private Vector3 _modelPostion = Vector3.Up;
         private Vector3 _cameraPostion = new Vector3(100, 0, 600);
 
-        private float _scale = 1.0f;
-        private float _currentTime = 0f;
-        private float _expandDuration = 1.0f;
-        private Vector3 _breatheIn, _breathOut;
-        private bool _isPulsing = false;
-        private bool _isBreathingIn = true;
-
         private Effect _effect;
 
         public GameHome()
@@ -41,7 +29,6 @@ namespace Gwynwhyvaar.MeshViewer.DirectX11
             _graphics.IsFullScreen = false;
 
             _graphics.DeviceCreated += _graphics_DeviceCreated;
-            _isPulsing = true;
 
             Window.Title = "### Monogame Mesh Viewer ###";
         }
@@ -81,9 +68,8 @@ namespace Gwynwhyvaar.MeshViewer.DirectX11
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
-            // DrawSolid();
-            DrawSolidWithScale();
-            // _tempPos = _posOffset;
+            
+            DrawSolid();
             base.Draw(gameTime);
         }
         private void DrawSolid()
@@ -103,60 +89,20 @@ namespace Gwynwhyvaar.MeshViewer.DirectX11
                     effect.View = Matrix.CreateLookAt(_cameraPostion, Vector3.Zero, Vector3.Up);
                     effect.Projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(45.0f), _aspectRatio, 0.1f, 1000.0f);
 
-                    effect.AmbientLightColor = Vector3.One; // Color.LightSkyBlue.ToVector3();
+                    effect.AmbientLightColor = Vector3.One;
                     effect.Alpha = 1;
                     effect.SpecularColor = Vector3.Zero;
                     effect.EmissiveColor = Vector3.Zero;
+                    if (mesh.Name.ToLowerInvariant().Equals("mesh12"))
+                    {
+                        effect.EmissiveColor = Color.Violet.ToVector3();
+                    }
                     // this part allows drawing of the meshes in solid
                     effect.DirectionalLight0.Enabled = true;
                     effect.DirectionalLight1.Enabled = false;
                     effect.DirectionalLight2.Enabled = false;
                 }
                 mesh.Draw();
-            }
-        }
-        private void DrawSolidWithScale()
-        {
-            Matrix[] parentTransforms = new Matrix[_modelViewerModel.Bones.Count];
-
-            _modelViewerModel.CopyAbsoluteBoneTransformsTo(parentTransforms);
-
-            foreach (ModelMesh mesh in _modelViewerModel.Meshes)
-            {
-                foreach (BasicEffect effect in mesh.Effects)
-                {
-                    effect.EnableDefaultLighting();
-
-                    effect.World = parentTransforms[mesh.ParentBone.Index] * Matrix.CreateRotationY(_modelRotation) * Matrix.CreateTranslation(_modelPostion) * Matrix.CreateScale(_scale);
-
-                    effect.View = Matrix.CreateLookAt(_cameraPostion, Vector3.Zero, Vector3.Up);
-                    effect.Projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(45.0f), _aspectRatio, 0.1f, 1000.0f);
-
-                    effect.AmbientLightColor = Vector3.One; // Color.LightSkyBlue.ToVector3();
-                    effect.Alpha = 1;
-                    effect.SpecularColor = Vector3.Zero;
-                    effect.EmissiveColor = Vector3.Zero;
-                    // this part allows drawing of the meshes in solid
-                    effect.DirectionalLight0.Enabled = true;
-                    effect.DirectionalLight1.Enabled = false;
-                    effect.DirectionalLight2.Enabled = false;
-                }
-                mesh.Draw();
-            }
-        }
-       
-        private void MakeModelBreath(GameTime gameTime)
-        {
-            if (_isPulsing)
-            {
-                Vector3 targetScale = _isBreathingIn ? _breatheIn : _breathOut;
-                Vector3 startScale = _isBreathingIn ? _breathOut : _breatheIn;
-
-                _currentTime += (float)gameTime.ElapsedGameTime.TotalSeconds;
-
-                float lerpFactor = _currentTime / _expandDuration;
-                _scale = Vector3.Lerp(startScale, targetScale, lerpFactor).Length();
-
             }
         }
     }
