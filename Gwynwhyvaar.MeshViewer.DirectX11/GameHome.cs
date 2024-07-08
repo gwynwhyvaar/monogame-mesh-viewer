@@ -74,12 +74,8 @@ namespace Gwynwhyvaar.MeshViewer.DirectX11
             {
                 Exit();
             }
-            // TODO: Add your update logic here
             _modelRotation += (float)gameTime.ElapsedGameTime.TotalMilliseconds * MathHelper.ToRadians(0.015f);
-            float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
-            float modelFloating = MathF.Sin(deltaTime * MathF.PI * _frequency) * _amplitude;
-            FloatModel(modelFloating);
-
+          
             base.Update(gameTime);
         }
 
@@ -119,12 +115,6 @@ namespace Gwynwhyvaar.MeshViewer.DirectX11
                 }
                 mesh.Draw();
             }
-        }
-        private void FloatModel(float rotationSpeed)
-        {
-            // _tempPos = _posOffset;
-            _tempPos.Y += rotationSpeed;
-            _modelPostion = _tempPos;
         }
     }
 }
