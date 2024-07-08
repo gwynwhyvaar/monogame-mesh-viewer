@@ -1,11 +1,6 @@
-﻿
-using System;
-
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 
 namespace Gwynwhyvaar.MeshViewer.DirectX11
 {
@@ -22,14 +17,6 @@ namespace Gwynwhyvaar.MeshViewer.DirectX11
         private Vector3 _modelPostion = Vector3.Up;
         private Vector3 _cameraPostion = new Vector3(100, 0, 600);
 
-        // Position Storage Variables
-        private Vector3 _posOffset = new Vector3();
-        private Vector3 _tempPos = new Vector3();
-
-        // floaty stuff ...
-        private float _amplitude = 0.15f;
-        private float _frequency = 50f;
-
         private Effect _effect;
 
         public GameHome()
@@ -44,8 +31,6 @@ namespace Gwynwhyvaar.MeshViewer.DirectX11
             _graphics.DeviceCreated += _graphics_DeviceCreated;
 
             Window.Title = "### Monogame Mesh Viewer ###";
-
-            _posOffset = _modelPostion;
         }
 
         private void _graphics_DeviceCreated(object sender, System.EventArgs e)
@@ -74,8 +59,8 @@ namespace Gwynwhyvaar.MeshViewer.DirectX11
             {
                 Exit();
             }
-            _modelRotation += (float)gameTime.ElapsedGameTime.TotalMilliseconds * MathHelper.ToRadians(0.015f);
-          
+            _modelRotation += (float)gameTime.ElapsedGameTime.TotalMilliseconds * MathHelper.ToRadians(0.025f);
+
             base.Update(gameTime);
         }
 
@@ -83,8 +68,8 @@ namespace Gwynwhyvaar.MeshViewer.DirectX11
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+            
             DrawSolid();
-            // _tempPos = _posOffset;
             base.Draw(gameTime);
         }
         private void DrawSolid()
@@ -104,10 +89,14 @@ namespace Gwynwhyvaar.MeshViewer.DirectX11
                     effect.View = Matrix.CreateLookAt(_cameraPostion, Vector3.Zero, Vector3.Up);
                     effect.Projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(45.0f), _aspectRatio, 0.1f, 1000.0f);
 
-                    effect.AmbientLightColor = Vector3.One; // Color.LightSkyBlue.ToVector3();
+                    effect.AmbientLightColor = Vector3.One;
                     effect.Alpha = 1;
                     effect.SpecularColor = Vector3.Zero;
                     effect.EmissiveColor = Vector3.Zero;
+                    if (mesh.Name.ToLowerInvariant().Equals("mesh12"))
+                    {
+                        effect.EmissiveColor = Color.Violet.ToVector3();
+                    }
                     // this part allows drawing of the meshes in solid
                     effect.DirectionalLight0.Enabled = true;
                     effect.DirectionalLight1.Enabled = false;
