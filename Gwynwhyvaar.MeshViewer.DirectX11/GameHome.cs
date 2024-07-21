@@ -48,7 +48,7 @@ namespace Gwynwhyvaar.MeshViewer.DirectX11
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            _modelViewerModel = Content.Load<Model>("grass");
+            _modelViewerModel = Content.Load<Model>("wizard");
 
             _aspectRatio = _graphics.GraphicsDevice.Viewport.AspectRatio;
         }
