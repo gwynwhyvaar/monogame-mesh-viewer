@@ -12,7 +12,7 @@ namespace Gwynwhyvaar.MeshViewer.DirectX11
         private float _modelRotation = 15.5f;
 
         private GraphicsDeviceManager _graphics;
-        private Microsoft.Xna.Framework.Graphics.SpriteBatch _spriteBatch;
+        private SpriteBatch _spriteBatch;
 
         private Vector3 _modelPostion = Vector3.Up;
         private Vector3 _cameraPostion = new Vector3(100, 0, 600);
@@ -29,15 +29,15 @@ namespace Gwynwhyvaar.MeshViewer.DirectX11
             _graphics.IsFullScreen = false;
 
             _graphics.DeviceCreated += _graphics_DeviceCreated;
-
-            Window.Title = "### Monogame Mesh Viewer ###";
         }
 
         private void _graphics_DeviceCreated(object sender, System.EventArgs e)
         {
             _graphics.PreferMultiSampling = true;
-            _graphics.PreferredBackBufferFormat = SurfaceFormat.Color;
-            _graphics.GraphicsDevice.PresentationParameters.MultiSampleCount = 16;
+            _graphics.PreferredBackBufferFormat = SurfaceFormat.ColorSRgb;
+            _graphics.GraphicsDevice.PresentationParameters.MultiSampleCount = 32;
+
+            Window.Title = $"Wizard ov War Mesh Viewer | {_graphics.GraphicsDevice.Viewport.Width} * {_graphics.GraphicsDevice.Viewport.Height}";
         }
         protected override void Initialize()
         {
@@ -46,9 +46,9 @@ namespace Gwynwhyvaar.MeshViewer.DirectX11
 
         protected override void LoadContent()
         {
-            _spriteBatch = new Microsoft.Xna.Framework.Graphics.SpriteBatch(GraphicsDevice);
+            _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            _modelViewerModel = Content.Load<Model>("wizard");
+            _modelViewerModel = Content.Load<Model>("grass");
 
             _aspectRatio = _graphics.GraphicsDevice.Viewport.AspectRatio;
         }
