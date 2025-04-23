@@ -1,4 +1,6 @@
 ﻿
+using System.Web;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -103,6 +105,15 @@ namespace Gwynwhyvaar.MeshViewer.DirectX11
                 mesh.Draw();
             }
             base.Draw(gameTime);
+        }
+        private string GetFileTypeFromExtension(string extension)
+        {
+            return extension.ToLowerInvariant() switch
+            {
+                ".pdf" or ".pdif" =>"Pdf File from Adobe",
+                ".gif" or ".jpeg" or ".pdf" or ".tif "=>"Image file",
+                _ =>"An Unknown file type"
+            };
         }
     }
 }
